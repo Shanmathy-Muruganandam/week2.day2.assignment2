@@ -27,7 +27,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DuplicateLead {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		
 		WebDriverManager.chromedriver().setup();
 		ChromeDriver driver = new ChromeDriver();
@@ -41,19 +41,29 @@ public class DuplicateLead {
 		driver.findElement(By.partialLinkText("Leads")).click();
 		driver.findElement(By.partialLinkText("Find Leads")).click();
 		driver.findElement(By.partialLinkText("Email")).click();
-		driver.findElement(By.name("emailAddress")).sendKeys("hari@testleaf.com");
+		driver.findElement(By.name("emailAddress")).sendKeys("sharath@gmail.com");
 		driver.findElement(By.xpath("//button[contains(text(),'Find Leads')]")).click();
-		driver.findElement(By.xpath("//div[@class ='x-grid3-cell-inner x-grid3-col-firstName']")).click();
-		WebElement firstLead = driver.findElement(By.xpath("//div[@class ='x-grid3-cell-inner x-grid3-col-firstName']"));
-		String lead = firstLead.getText();
-		System.out.println("First Lead:\n\t"+ lead);
-		driver.findElement(By.xpath("//div[@class ='x-grid3-cell-inner x-grid3-col-firstName']")).click();
+		Thread.sleep(2000);
+		WebElement firstLead = driver.findElement(By.xpath("//div[@class='x-grid3-cell-inner x-grid3-col-firstName']//a"));
+		String capturedLead = firstLead.getText();
+		System.out.println("First Lead is Captured: \t "+capturedLead);
+		firstLead.click();
 		driver.findElement(By.linkText("Duplicate Lead")).click();
+		if(driver.getTitle().contains("Duplicate Lead")) {
+			System.out.println("Title: \t Duplicate Lead");
+		}else {
+			System.out.println("Title: \t Not Duplicate Lead");
+		}
 		driver.findElement(By.xpath("(//input[@class ='smallSubmit'])")).click();
-		WebElement capturedLead = driver.findElement(By.xpath("//span[@id ='viewLead_firstName_sp']"));
-		String lead1 = capturedLead.getText();
-		System.out.println("Captured Lead:\n\t"+ lead1);
-		
+		WebElement duplicateLead = driver.findElement(By.xpath("//span[@id ='viewLead_firstName_sp']"));
+		String lead = duplicateLead.getText();
+		System.out.println("Captured Duplicate Lead: \t "+ lead);
+		if(capturedLead.equals(lead)) {
+	    	System.out.println("Duplicated lead name = Captured name");
+	    }else {
+	    	System.out.println("Duplicated lead name != Captured name");
+	    }
+		driver.close();		
 	}
 
 }
